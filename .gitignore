@@ -7,3 +7,6 @@ source/Domain/obj/
 source/Domain/bin/
 source/API/obj/
 source/API/bin/
+Tests/UnitTests/obj/
+Tests/UnitTests/bin/
+CodeChallenge.sln.DotSettings.user

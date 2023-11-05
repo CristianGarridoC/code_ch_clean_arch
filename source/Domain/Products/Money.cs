@@ -13,7 +13,7 @@ public sealed record Money
 
     public static Money Create(decimal amount, Currency currency)
     {
-        if (amount < 0)
+        if (amount <= 0)
         {
             throw new ApplicationException("The amount must be greater than or equals to 0");
         }

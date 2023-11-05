@@ -7,15 +7,15 @@ using Newtonsoft.Json;
 
 namespace Application.Product.Queries.GetAll;
 
-public class GetAllCommandHandler : IRequestHandler<GetAllRequest, GetAllResponse>
+public class GetAllQueryHandler : IRequestHandler<GetAllRequest, GetAllResponse>
 {
     private readonly IProductRepository _productRepository;
     private readonly ICacheService _cacheService;
     private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly ILogger<GetAllCommandHandler> _logger;
+    private readonly ILogger<GetAllQueryHandler> _logger;
 
-    public GetAllCommandHandler(IProductRepository productRepository,
-        ICacheService cacheService, IDateTimeProvider dateTimeProvider, ILogger<GetAllCommandHandler> logger)
+    public GetAllQueryHandler(IProductRepository productRepository,
+        ICacheService cacheService, IDateTimeProvider dateTimeProvider, ILogger<GetAllQueryHandler> logger)
     {
         _productRepository = productRepository;
         _cacheService = cacheService;

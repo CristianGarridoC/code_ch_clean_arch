@@ -5,11 +5,11 @@ using MediatR;
 
 namespace Application.Product.Queries.GetById;
 
-public class GetByIdCommandHandler : IRequestHandler<GetByIdRequest, Common.ProductResponse>
+public class GetByIdQueryHandler : IRequestHandler<GetByIdRequest, Common.ProductResponse>
 {
     private readonly IProductRepository _productRepository;
 
-    public GetByIdCommandHandler(IProductRepository productRepository)
+    public GetByIdQueryHandler(IProductRepository productRepository)
     {
         _productRepository = productRepository;
     }
