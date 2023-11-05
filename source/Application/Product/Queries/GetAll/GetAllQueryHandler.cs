@@ -25,23 +25,24 @@ public class GetAllQueryHandler : IRequestHandler<GetAllRequest, GetAllResponse>
 
     public async Task<GetAllResponse> Handle(GetAllRequest request, CancellationToken cancellationToken)
     {
-        var result = Enumerable.Empty<ProductResponse>();
-        var cache = await _cacheService.GetRecordAsync("GetAll_Products");
-        if (string.IsNullOrWhiteSpace(cache))
+        IEnumerable<ProductResponse> result;
+        var cache = await _cacheService.GetRecordAsync(Constants.Product.CacheKey);
+        if (!string.IsNullOrWhiteSpace(cache))
         {
-            _logger.LogInformation("Not using cache in GetAll command");
-            result = await _productRepository.GetAll();
-            await _cacheService.SetRecordAsync(
-                "GetAll_Products",
-                JsonConvert.SerializeObject(result),
-                new DistributedCacheEntryOptions
-                {
-                    AbsoluteExpiration = _dateTimeProvider.DateTimeOffsetNow.AddSeconds(20)
-                });
+            _logger.LogInformation("Using cache in GetAll command");
+            result = JsonConvert.DeserializeObject<IEnumerable<ProductResponse>>(cache)!;
             return new GetAllResponse(result);
         }
-        _logger.LogInformation("Using cache in GetAll command");
-        result = JsonConvert.DeserializeObject<IEnumerable<ProductResponse>>(cache);
+        
+        _logger.LogInformation("Not using cache in GetAll command");
+        result = await _productRepository.GetAll();
+        await _cacheService.SetRecordAsync(
+            Constants.Product.CacheKey,
+            JsonConvert.SerializeObject(result),
+            new DistributedCacheEntryOptions
+            {
+                AbsoluteExpiration = _dateTimeProvider.DateTimeOffsetNow.AddHours(1)
+            });
         return new GetAllResponse(result);
     }
 }

@@ -1,3 +1,4 @@
+using Application;
 using Application.Abstractions;
 using Application.Product.Common;
 using Application.Product.Queries.GetAll;
@@ -40,7 +41,7 @@ public class GetAllQueryHandlerTests
             )
         };
         // Arrange
-        _cacheService.GetRecordAsync("GetAll_Products").Returns(string.Empty);
+        _cacheService.GetRecordAsync(Constants.Product.CacheKey).Returns(string.Empty);
         _productRepository.GetAll().Returns(products);
         _dateTimeProvider.DateTimeOffsetNow.Returns(DateTimeOffset.Now);
         
@@ -48,8 +49,8 @@ public class GetAllQueryHandlerTests
         var result = await _sut.Handle(new GetAllRequest(), CancellationToken.None);
         
         // Assert
-        await _cacheService.Received(1).GetRecordAsync("GetAll_Products");
-        await _cacheService.Received(1).SetRecordAsync("GetAll_Products", Arg.Any<string>(), Arg.Any<DistributedCacheEntryOptions>());
+        await _cacheService.Received(1).GetRecordAsync(Constants.Product.CacheKey);
+        await _cacheService.Received(1).SetRecordAsync(Constants.Product.CacheKey, Arg.Any<string>(), Arg.Any<DistributedCacheEntryOptions>());
         result.Should().NotBeNull();
         result.Products.Should().NotBeEmpty();
     }
@@ -68,7 +69,7 @@ public class GetAllQueryHandlerTests
             )
         };
         // Arrange
-        _cacheService.GetRecordAsync("GetAll_Products").Returns(JsonConvert.SerializeObject(products));
+        _cacheService.GetRecordAsync(Constants.Product.CacheKey).Returns(JsonConvert.SerializeObject(products));
         _productRepository.GetAll().Returns(products);
         _dateTimeProvider.DateTimeOffsetNow.Returns(DateTimeOffset.Now);
         
@@ -76,8 +77,8 @@ public class GetAllQueryHandlerTests
         var result = await _sut.Handle(new GetAllRequest(), CancellationToken.None);
         
         // Assert
-        await _cacheService.Received(1).GetRecordAsync("GetAll_Products");
-        await _cacheService.DidNotReceive().SetRecordAsync("GetAll_Products", Arg.Any<string>(), Arg.Any<DistributedCacheEntryOptions>());
+        await _cacheService.Received(1).GetRecordAsync(Constants.Product.CacheKey);
+        await _cacheService.DidNotReceive().SetRecordAsync(Constants.Product.CacheKey, Arg.Any<string>(), Arg.Any<DistributedCacheEntryOptions>());
         result.Should().NotBeNull();
         result.Products.Should().NotBeEmpty();
         result.Products.Should().BeEquivalentTo(products);

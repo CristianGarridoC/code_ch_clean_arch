@@ -9,10 +9,12 @@ namespace Application.Product.Commands.Create;
 public class CreateCommandHandler : IRequestHandler<CreateRequest, CreateResponse>
 {
     private readonly IProductRepository _productRepository;
+    private readonly IPublisher _publisher;
 
-    public CreateCommandHandler(IProductRepository productRepository)
+    public CreateCommandHandler(IProductRepository productRepository, IPublisher publisher)
     {
         _productRepository = productRepository;
+        _publisher = publisher;
     }
 
     public async Task<CreateResponse> Handle(CreateRequest request, CancellationToken cancellationToken)
@@ -29,7 +31,8 @@ public class CreateCommandHandler : IRequestHandler<CreateRequest, CreateRespons
         }
 
         await _productRepository.AddAsync(product);
-
+        await _publisher.Publish(new CacheInvalidationProductEvent(), cancellationToken);
+        
         return new CreateResponse(product.Id.Value.ToString());
     }
 }

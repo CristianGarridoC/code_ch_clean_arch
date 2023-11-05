@@ -13,6 +13,7 @@ public static class Constants
     {
         public const string AlreadyExists = "The product name already exists in the database";
         public const string NotFound = "We could not found the product";
+        public const string CacheKey = "GetAll_Products";
     }
     
     public static class ErrorMessages

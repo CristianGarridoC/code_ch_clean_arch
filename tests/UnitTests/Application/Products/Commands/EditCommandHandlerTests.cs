@@ -1,11 +1,13 @@
 using Application;
 using Application.Abstractions;
 using Application.Exceptions;
+using Application.Product;
 using Application.Product.Commands.Edit;
 using Application.Product.Common;
 using AutoFixture;
 using Domain.Products;
 using FluentAssertions;
+using MediatR;
 using NSubstitute;
 
 namespace UnitTests.Application.Products.Commands;
@@ -13,14 +15,16 @@ namespace UnitTests.Application.Products.Commands;
 public class EditCommandHandlerTests
 {
     private readonly IProductRepository _productRepository;
+    private readonly IPublisher _publisher;
     private readonly Fixture _fixture;
     private readonly EditCommandHandler _sut;
 
     public EditCommandHandlerTests()
     {
         _productRepository = Substitute.For<IProductRepository>();
+        _publisher = Substitute.For<IPublisher>();
         _fixture = new Fixture();
-        _sut = new EditCommandHandler(_productRepository);
+        _sut = new EditCommandHandler(_productRepository, _publisher);
     }
     
     [Fact]
@@ -35,6 +39,7 @@ public class EditCommandHandlerTests
         await _sut.Handle(request, CancellationToken.None);
         
         await _productRepository.Received(1).UpdateAsync(Arg.Any<Domain.Products.Product>());
+        await _publisher.Received(1).Publish(Arg.Any<CacheInvalidationProductEvent>());
     }
     
     [Fact]
@@ -45,7 +50,8 @@ public class EditCommandHandlerTests
         var result = async () => await _sut.Handle(request, CancellationToken.None);
 
         await result.Should().ThrowAsync<NotFoundException>().WithMessage(Constants.Product.NotFound);
-        await _productRepository.Received(0).UpdateAsync(Arg.Any<Domain.Products.Product>());
+        await _productRepository.DidNotReceive().UpdateAsync(Arg.Any<Domain.Products.Product>());
+        await _publisher.DidNotReceive().Publish(Arg.Any<CacheInvalidationProductEvent>());
     }
     
     [Fact]
@@ -63,6 +69,7 @@ public class EditCommandHandlerTests
         var result = async () => await _sut.Handle(request, CancellationToken.None);
 
         await result.Should().ThrowAsync<AlreadyExistsException>().WithMessage(Constants.Product.AlreadyExists);
-        await _productRepository.Received(0).UpdateAsync(Arg.Any<Domain.Products.Product>());
+        await _productRepository.DidNotReceive().UpdateAsync(Arg.Any<Domain.Products.Product>());
+        await _publisher.DidNotReceive().Publish(Arg.Any<CacheInvalidationProductEvent>());
     }
 }

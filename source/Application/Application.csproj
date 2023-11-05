@@ -19,11 +19,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Product\" />
+      <ProjectReference Include="..\Domain\Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Domain\Domain.csproj" />
+        <InternalsVisibleTo Include="UnitTests" />
     </ItemGroup>
 
 </Project>

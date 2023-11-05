@@ -25,5 +25,5 @@ Commands to execute the project:
 Notes:
     
     - The product controller has a rate limit of 3 requests in a time window of 10 seconds if more than 3 requests are made within those 10 seconds it returns a 429 error.
-    - The GetAll endpoint uses a cache with an expiration time of 20 seconds.
-    - If a product is added, updated or removed, it will not be reflected in the GetAll endpoint until the cache expires.
+    - The GetAll endpoint uses a cache with an expiration time of 1 hour.
+    - If a product is added, updated or removed, we invalidate the cache on the GetAll endpoint.

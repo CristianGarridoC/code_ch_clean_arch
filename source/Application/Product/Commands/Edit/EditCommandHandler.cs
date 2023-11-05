@@ -8,10 +8,12 @@ namespace Application.Product.Commands.Edit;
 public class EditCommandHandler : IRequestHandler<EditRequest, Unit>
 {
     private readonly IProductRepository _productRepository;
+    private readonly IPublisher _publisher;
 
-    public EditCommandHandler(IProductRepository productRepository)
+    public EditCommandHandler(IProductRepository productRepository, IPublisher publisher)
     {
         _productRepository = productRepository;
+        _publisher = publisher;
     }
 
     public async Task<Unit> Handle(EditRequest request, CancellationToken cancellationToken)
@@ -35,6 +37,7 @@ public class EditCommandHandler : IRequestHandler<EditRequest, Unit>
         var product = Domain.Products.Product.Create(productId, name, brand, price);
 
         await _productRepository.UpdateAsync(product);
+        await _publisher.Publish(new CacheInvalidationProductEvent(), cancellationToken);
         return Unit.Value;
     }
 }
