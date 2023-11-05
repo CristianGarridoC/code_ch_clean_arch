@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  postgres:
+    container_name: local_postgresql_code_challenge
+    hostname: local_postgresql_code_challenge
+    image: postgres:15.1
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    build:
+      context: .
+      dockerfile: dockerfile-postgres
+    environment:
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_USER=app_user
+      - POSTGRES_DB=postgres
+      - POSTGRES_APP_DB=code_challenge
+      
+  redis:
+    container_name: local_redis_code_challenge
+    hostname: local_redis_code_challenge
+    image: redis:7.0.8-alpine
+    ports:
+      - "5437:6379"
+    volumes:
+      - redis_data:/data
+  
+  backend:
+    container_name: backend_product_code_challenge
+    depends_on:
+      - postgres
+      - redis
+    restart: on-failure
+    ports:
+      - "5200:80"
+    build:
+      context: ../../
+      dockerfile: dockerfile-backend
+      
+volumes:
+  postgres_data:
+  redis_data:
+      

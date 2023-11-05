@@ -1,0 +1,9 @@
+.idea/
+source/Application/obj/
+source/Application/bin/
+source/Infrastructure/obj/
+source/Infrastructure/bin/
+source/Domain/obj/
+source/Domain/bin/
+source/API/obj/
+source/API/bin/
