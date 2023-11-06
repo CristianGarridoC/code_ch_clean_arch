@@ -21,6 +21,7 @@ Commands to execute the project:
     cd source/API
     docker compose build
     docker compose up
+    localhost:5200
 
 Notes:
     
